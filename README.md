@@ -19,7 +19,8 @@ Each section starts with its main point.
 [5. Memory architecture](#5-memory-architecture) · [6. Example answers](#6-example-answers) ·
 [7. Results](#7-results) · [8. Why this design](#8-why-this-design-compared-with-the-alternatives) ·
 [9. Guardrails](#9-guardrails-and-security) · [10. Where it fits](#10-where-it-fits-the-grounding-layer) ·
-[11. Repository map](#11-repository-map) · [12. Rules compliance](#12-rules-compliance)
+[11. Prompting techniques](#11-prompting-techniques-i-used) · [12. Repository map](#12-repository-map) ·
+[13. Rules compliance](#13-rules-compliance)
 
 ---
 
@@ -356,7 +357,52 @@ fact. That keeps rate answers correct as the website changes.
 
 ---
 
-## 11. Repository map
+## 11. Prompting techniques I used
+
+**I built this project with an AI coding assistant, and I steered it with deliberate prompting techniques.** The
+submitted system itself sends no prompts: it uses no language model at run time. This section shows how I
+directed the work: the loop I followed, and the techniques with the real prompts I wrote.
+
+### The loop I followed
+
+```mermaid
+flowchart LR
+    A["Ground<br/>read the kit, confirm<br/>the requirements"] --> B["Plan<br/>compare options,<br/>choose multi-agent"]
+    B --> C["Build<br/>under hard<br/>constraints"]
+    C --> D["Measure<br/>public set, reworded set,<br/>held-out set"]
+    D --> E{"Points lost?"}
+    E -->|"yes"| F["Ask why<br/>find the root cause"]
+    F --> G["Fix only with<br/>a general rule"]
+    G --> D
+    E -->|"no"| H["Review<br/>design, guardrails,<br/>security"]
+    H --> I["Approval gate<br/>no commit until<br/>I say so"]
+    I --> J["Publish only what<br/>evaluators need"]
+```
+
+### The techniques, with the prompts I wrote
+
+| Technique | What I asked (my own words, shortened) | What it gave the project |
+|---|---|---|
+| Ground in the sources first | "Inspect the actual project files. Confirm the requirements against those files. Then propose the best plan by comparing them." | The design started from the kit's contract, scorer and data, not from guesses |
+| Compare options before building | "...compare them" → "Build the full multi-agent plan instead." | A deliberate choice of the multi-agent design over the simpler plan |
+| Hard constraints as guardrails | "Use only the supplied snapshots as answer evidence." "Keep the original harness and evaluation data unchanged." "Do not create a fixed lookup table of practice answers." "Do not commit API secrets." | No live web calls, an unchanged scorer, no hard-coded answers and no secrets in the repository |
+| Fixed output style | "Start every response with my name. Use short, direct ASD-STE100 sentences. Keep exact code names, file names and technical terms." | Clear, consistent explanations and documentation (this README uses the same style) |
+| Check that every input was read | "These are pages 4 and 5. Check whether you went through them." | Every page of the assignment was covered |
+| Measure, do not assume | "What is the accuracy after we ran the tests that we built?" | Decisions based on scores; the reworded and held-out sets guard against overfitting |
+| Ask for visual explanations | "What are the agents and their workflow? Give me a visual graph. Is there any other flow that works better against my plan?" | The architecture diagram and the flows on this page |
+| Ask why before fixing | "Why?" (about the five public questions that still lost points) | The root cause of each miss: missing evidence, a wrong cited page or a scorer limit |
+| Cost-benefit gate on fixes | "Fix them if needed for my requirements or to score points; leave them if not needed." | Three general fixes (0.90 → 0.97 public, 0.99 → 1.0 held-out); one item left alone because no code change could earn it |
+| Final review pass | "Check if you can make a better design... after everything, check for guardrails and security patches." | Input limits, safe ingestion, a locked-down web server and 25 unit tests |
+| Human approval gate | "Do not commit yet. I want some UI changes first." | Nothing was published until I approved it |
+| Backlog in one list | A handwritten list of nine UI and document changes, worked through item by item | The chat UI, full dates, the sources box, the memory tab and the pitch |
+| Audience framing | "Pitch it to managers and recruiters, using agentic AI terms." "Write it as if I am explaining it to the evaluators." | One message, worded for each reader |
+| Exact asset specification | "16:9 horizontal, pure white background, black hand-drawn line art, sparse red/orange/blue handwritten English annotations." | The illustrations on this page, all in one style |
+| Audit against the source documents | "Read the assignment PDF and README and check if the requirements are met." | The rules compliance table below, and a clean-environment test of the scorer command |
+| Scoped publishing | "Push only what is important for the evaluators to run and evaluate the model. Exclude the supplied website snapshots and any API keys." | This repository: code, scorer and docs, with no snapshot data and no keys |
+
+---
+
+## 12. Repository map
 
 | Path | Content |
 |---|---|
@@ -373,7 +419,7 @@ fact. That keeps rate answers correct as the website changes.
 
 ---
 
-## 12. Rules compliance
+## 13. Rules compliance
 
 | Rule from the assignment | Status |
 |---|---|
