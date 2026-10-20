@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Credit Union Assistant</title>
+  <meta name="description" content="A chat assistant that answers from saved copies of the credit union website, with sources and dates.">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="top">
+    <div class="wrap top-row">
+      <div class="brand">
+        <span class="mark" aria-hidden="true"></span>
+        <div>
+          <h1>Credit Union Assistant</h1>
+          <p class="sub" id="tagline">interface.ai</p>
+        </div>
+      </div>
+      <div class="top-actions">
+        <span class="pill" id="status-pill" role="status">Loading</span>
+        <button class="icon-btn" id="theme-btn" type="button" aria-label="Switch light or dark theme">◐</button>
+      </div>
+    </div>
+    <nav class="wrap tabs" role="tablist" aria-label="Sections">
+      <button role="tab" id="tab-chat" aria-controls="panel-chat" aria-selected="true">Chat</button>
+      <button role="tab" id="tab-features" aria-controls="panel-features" aria-selected="false" tabindex="-1">Features</button>
+      <button role="tab" id="tab-snapshots" aria-controls="panel-snapshots" aria-selected="false" tabindex="-1">Snapshots</button>
+      <button role="tab" id="tab-faq" aria-controls="panel-faq" aria-selected="false" tabindex="-1">FAQ</button>
+    </nav>
+  </header>
+
+  <main id="main" class="wrap">
+    <section class="loading" id="loading" aria-live="polite">
+      <div class="loading-card">
+        <h2>Loading the website snapshots</h2>
+        <p id="loading-step">Starting</p>
+        <div class="bar" role="progressbar" aria-label="Loading progress" aria-valuemin="0" aria-valuemax="100" id="bar"><span id="bar-fill"></span></div>
+        <p class="hint">The first start reads all pages and takes about one minute. Later starts load a saved copy in a few seconds.</p>
+      </div>
+    </section>
+
+    <!-- Chat -->
+    <section id="panel-chat" role="tabpanel" aria-labelledby="tab-chat" class="panel" hidden>
+      <div class="chat-grid">
+        <section class="chat" aria-label="Chat">
+          <div class="chat-head">
+            <div>
+              <h2>Chat</h2>
+              <p class="meta" id="coverage"></p>
+            </div>
+            <button type="button" class="ghost" id="new-chat">New chat</button>
+          </div>
+
+          <div id="thread" class="thread" role="log" aria-live="polite" aria-label="Conversation"></div>
+
+          <form id="composer" class="composer" novalidate>
+            <div class="composer-row">
+              <label for="question" class="vh">Your message</label>
+              <textarea id="question" rows="1" maxlength="1000" placeholder="Type your question" required></textarea>
+              <button type="submit" class="primary send" id="ask-btn">Send</button>
+            </div>
+            <div class="composer-opts">
+              <label for="as-of" class="opt-label">As of</label>
+              <select id="as-of" aria-describedby="asof-note"></select>
+              <span id="custom-date" class="custom-date" hidden>
+                <label for="d-month" class="vh">Month</label>
+                <select id="d-month"></select>
+                <label for="d-day" class="vh">Day</label>
+                <select id="d-day"></select>
+                <label for="d-year" class="vh">Year</label>
+                <select id="d-year"></select>
+              </span>
+              <span class="meta" id="asof-note"></span>
+            </div>
+            <p class="error" id="form-error" role="alert"></p>
+          </form>
+        </section>
+
+        <aside class="col-side">
+          <div class="card">
+            <h2 class="h-small">Try a question</h2>
+            <div id="samples" class="samples"></div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section id="panel-features" role="tabpanel" aria-labelledby="tab-features" class="panel" hidden>
+      <div class="card">
+        <h2>Answers you can check</h2>
+        <p class="lead">Ask about the credit union's rates, fees, products and branches. Each answer comes from the credit union's own website and shows where it came from.</p>
+        <div class="features">
+          <article class="feature"><span class="f-icon" aria-hidden="true">❝</span><h3>Sources with every answer</h3><p>Open <strong>Sources</strong> under an answer to see each page, the date of the website copy and the exact text.</p></article>
+          <article class="feature"><span class="f-icon" aria-hidden="true">◷</span><h3>Current or any past date</h3><p>Use the <strong>As of</strong> menu to see the website as it stood on a date. Ask "Did the rate change?" to compare dates.</p></article>
+          <article class="feature"><span class="f-icon" aria-hidden="true">⇄</span><h3>Contradictions explained</h3><p>When two pages disagree, you get the value from the most reliable page, the reason, and the other values.</p></article>
+          <article class="feature"><span class="f-icon" aria-hidden="true">≡</span><h3>The right tier</h3><p>Name your balance, term, loan amount or vehicle year to get one row. Without it, you see the whole table.</p></article>
+          <article class="feature"><span class="f-icon" aria-hidden="true">↻</span><h3>Follow-up questions</h3><p>After a rate question, ask "What about 72 months?". <strong>Read as</strong> shows how your question was understood.</p></article>
+          <article class="feature"><span class="f-icon" aria-hidden="true">?</span><h3>No guessing</h3><p>If the website does not state it, the answer is "I don't know", with no numbers.</p></article>
+          <article class="feature"><span class="f-icon" aria-hidden="true">⌂</span><h3>Private</h3><p>The app runs on your computer. Your questions are not sent anywhere, and the chat is deleted when you reload.</p></article>
+          <article class="feature"><span class="f-icon" aria-hidden="true">»</span><h3>Fast</h3><p>Most answers take less than a tenth of a second.</p></article>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>What you can ask</h2>
+        <p class="lead">Select an example to ask it in the chat.</p>
+        <div class="topics">
+          <div class="topic"><h3>Loan rates</h3><p>Auto, motorcycle, home and other loans, by term and vehicle year.</p>
+            <button type="button" class="chip" data-ask="What's the APR for a 60-month auto loan on a 2025 model-year vehicle?">60-month auto loan APR</button>
+            <button type="button" class="chip" data-ask="What are the mortgage rates right now?">Mortgage rates</button></div>
+          <div class="topic"><h3>Savings and certificates</h3><p>Dividend rates and APY, by balance and term, including specials.</p>
+            <button type="button" class="chip" data-ask="What is the APY on the 17-month special certificate?">17-month special certificate</button>
+            <button type="button" class="chip" data-ask="What dividend rate do I earn on Share Savings with a $15,000 balance?">Share Savings, $15,000</button></div>
+          <div class="topic"><h3>Fees</h3><p>Service fees and charges.</p>
+            <button type="button" class="chip" data-ask="What is the overdraft fee?">Overdraft fee</button></div>
+          <div class="topic"><h3>Branches and service</h3><p>Addresses, opening hours, the routing number and the number of branches.</p>
+            <button type="button" class="chip" data-ask="What is the address of the Galena Branch?">Galena Branch address</button>
+            <button type="button" class="chip" data-ask="What are the drive-up hours?">Drive-up hours</button>
+            <button type="button" class="chip" data-ask="What is Dupaco's routing number?">Routing number</button></div>
+          <div class="topic"><h3>Dates and changes</h3><p>A value on a past date, or how a value changed.</p>
+            <button type="button" class="chip" data-ask="What was the rate on the 10-month fixed jumbo special certificate as of May 2026?">Jumbo certificate, May 2026</button>
+            <button type="button" class="chip" data-ask="Did the 10 month fixed jumbo special certificate rate change?">Did the rate change?</button></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>How to read an answer</h2>
+        <div class="anatomy">
+          <div class="mock" aria-hidden="true">
+            <div class="msg bot">
+              <div class="bubble">
+                <span class="badge">From the website</span><span class="num-tag">1</span>
+                <p class="line first">Auto &amp; Motorcycle Loans: 2024-27 Model Year (60 Months): APR 5.39% <span class="num-tag">2</span></p>
+                <p class="msg-meta">Website copy of September 28, 2026 (current) <span class="num-tag">3</span></p>
+              </div>
+              <div class="src-box mock-src"><div class="mock-sum"><span class="src-title">Sources</span><span class="src-sum">3 pages · other values on the website</span><span class="num-tag">4</span></div></div>
+            </div>
+          </div>
+          <ol class="legend">
+            <li><b>Badge.</b> "From the website" means that the website states the answer. "Not stated on the website" means that it does not.</li>
+            <li><b>The answer.</b> Copied from the website, with the tier, term or date that it applies to.</li>
+            <li><b>Website copy.</b> The date of the website copy that was used. "Current" is the newest copy.</li>
+            <li><b>Sources.</b> The pages and their exact text. If pages disagree, it also shows why this value was chosen and the other values.</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- Snapshots -->
+    <section id="panel-snapshots" role="tabpanel" aria-labelledby="tab-snapshots" class="panel" hidden>
+      <div class="card">
+        <h2>Website snapshots</h2>
+        <p class="lead">Each snapshot is a full copy of the website on one date. "Current" means the newest copy, not today's date.</p>
+        <h3>Timeline</h3>
+        <div class="timeline-wrap"><svg id="timeline" class="timeline" role="img" aria-label="Timeline of the website copies"></svg></div>
+        <p class="hint" id="timeline-note"></p>
+        <h3>Pages in each copy</h3>
+        <div class="legend-row" aria-hidden="true"><span><i class="sw new"></i>New or changed since the copy before</span><span><i class="sw same"></i>Same as the copy before</span></div>
+        <div class="bars" id="page-bars"></div>
+        <div class="stats" id="stats"></div>
+        <p class="hint" id="load-note"></p>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="panel-faq" role="tabpanel" aria-labelledby="tab-faq" class="panel" hidden>
+      <div class="card faq">
+        <h2>Frequently asked questions</h2>
+        <details><summary>What does this assistant do?</summary>
+          <p>It answers questions about the credit union's rates, fees, products and branches. It reads five saved copies (snapshots) of the credit union website and gives one answer with its sources.</p></details>
+        <details><summary>Where do the answers come from?</summary>
+          <p>Only from the five snapshots, dated May 12, 2026 to September 28, 2026. The assistant does not read the live website and does not use other sources.</p></details>
+        <details><summary>What does "Current" mean?</summary>
+          <p>"Current" means the newest copy of the website, September 28, 2026. Today's date can be later. The assistant cannot know about changes after the newest copy.</p></details>
+        <details><summary>How do I ask about a past date?</summary>
+          <p>Open the <strong>As of</strong> menu under the message box. Select a snapshot date, or select <strong>Another date…</strong> and pick the month, day and year. You can also write the month in your question, for example "as of May 2026". The assistant uses the newest copy on or before that date. It never uses a later copy for an earlier date. For a date before May 12, 2026, it says that it does not know.</p></details>
+        <details><summary>Can I ask a follow-up question?</summary>
+          <p>Yes. After "What's the APR for a 60-month auto loan on a 2025 vehicle?", you can ask "What about 72 months?". The assistant joins the follow-up to your last question and shows the joined question as <strong>Read as</strong>. Select <strong>New chat</strong> to start again without the last question.</p></details>
+        <details><summary>Where do I see the sources?</summary>
+          <p>Each answer has a <strong>Sources</strong> box under it. Open it to see the pages, the date of each copy and the quoted text.</p></details>
+        <details><summary>Two pages show different values. Which value does it use?</summary>
+          <p>It does not take a majority vote. The official rate page wins over product pages, and product pages win over promotions, news, blogs and calculators. A newer effective date wins over an older one. An offer that has ended loses. In the <strong>Sources</strong> box, <strong>Why this value</strong> gives the reason and <strong>Other values on the website</strong> lists the values that were not chosen.</p></details>
+        <details><summary>Why does it sometimes say "I don't know"?</summary>
+          <p>It says this when the snapshots do not state the fact, or when the evidence does not match your question closely. For example, the website shows no rate for a 7/1 adjustable-rate mortgage. The assistant does not guess, and an "I don't know" answer contains no numbers.</p></details>
+        <details><summary>What is the difference between APR, APY and dividend rate?</summary>
+          <p><strong>APR</strong> (annual percentage rate) is the yearly cost of a loan. <strong>APY</strong> (annual percentage yield) is the yearly return on savings, including compounding. The <strong>dividend rate</strong> is the rate paid on savings before compounding. The assistant keeps these three separate.</p></details>
+        <details><summary>Why does an answer show several rows?</summary>
+          <p>Many products have tiers by balance, term, loan amount or vehicle year. If you do not name a tier, the assistant shows the whole table. Name the tier, for example "$15,000 balance" or "84 months on a 2024 vehicle", to get one row.</p></details>
+        <details><summary>Can I ask how a value changed?</summary>
+          <p>Yes. Ask, for example, "Did the 10-month jumbo certificate rate change?" The assistant answers for each snapshot and shows the earlier and the current value.</p></details>
+        <details><summary>What does "a page that was last seen on" mean?</summary>
+          <p>The fact comes from a page that was later removed from the website. The assistant uses such a page only when no current page answers, and it tells you that the value may be out of date.</p></details>
+        <details><summary>Do the source links show the same text?</summary>
+          <p>Not always. A link opens the live website, which can be different from the saved copy. The quote under each source shows the text from the saved copy.</p></details>
+        <details><summary>Is my conversation stored or sent anywhere?</summary>
+          <p>No. The app runs on your computer and does not send data out. The conversation stays in this browser tab only. It is deleted when you reload the page or select <strong>New chat</strong>.</p></details>
+        <details><summary>Can I use an answer to make a financial decision?</summary>
+          <p>Use it for information only. It is not financial advice. Rates and fees change, so confirm with the credit union before you act.</p></details>
+        <details><summary>How fast is it?</summary>
+          <p>The first start reads all pages and takes about one minute. The app then saves what it learned, so later starts take a few seconds. Most answers take less than 0.1 seconds.</p></details>
+        <details><summary>Are there keyboard shortcuts?</summary>
+          <p>Press <kbd>/</kbd> to go to the message box. Press <kbd>Enter</kbd> to send, and <kbd>Shift</kbd> + <kbd>Enter</kbd> for a new line. Use the arrow keys to move between tabs.</p></details>
+      </div>
+    </section>
+  </main>
+
+  <footer class="wrap foot">
+    <p>Runs locally. Uses only the supplied website snapshots. For information only, not financial advice.</p>
+  </footer>
+  <script src="/app.js"></script>
+</body>
+</html>

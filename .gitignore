@@ -1,0 +1,15 @@
+results/
+__pycache__/
+*.pyc
+.DS_Store
+.env
+snapshots_zip/
+submission/app/.cache/
+graphify-out/
+
+# Kept local, not published. The website snapshots are shared for the event only and must not be
+# redistributed; the other files are the organizers' kit material and are not needed to run or score.
+/snapshots/
+/starter/
+/KIT-README.md
+/Knowledge-Hackathon-Assignment.pdf
