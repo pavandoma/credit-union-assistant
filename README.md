@@ -7,6 +7,12 @@ not state a fact, it says "I don't know".
 Built for a knowledge-system hackathon. Python standard library only: no API keys, no paid services, no
 network calls.
 
+![A team of agents: orchestrator, rates, fees and branch agents, verifier, conflict agent, verified memory and answer agent](docs/images/5-solution-team-of-agents.png)
+
+**Read the [pitch and design brief](docs/pitch-and-design-brief.md)**: the problem, the agent and memory
+architecture, the results, and a side-by-side comparison with a keyword search, a typical RAG chatbot and an
+LLM-only bot.
+
 ## What is in this repository
 
 | Folder | Content |
@@ -14,6 +20,7 @@ network calls.
 | `submission/` | The solution: `solution.py` with `build()`, the agents in `kb/`, tests, the optional web UI and `NOTES.md` |
 | `harness/` | The hackathon scorer (`run_eval.py`, `scoring.py`, `contract.py`) and its small artificial self-test data, unchanged |
 | `eval/` | The 40 public practice questions, unchanged |
+| `docs/` | The pitch and design brief, the architecture diagram and the illustrations |
 
 The website snapshots are **not** in this repository. They were shared for the event only. To run the
 evaluation, copy the kit's `snapshots_zip/` folder to the repository root. The scorer unpacks it on the first
@@ -54,6 +61,8 @@ and an FAQ. It runs on 127.0.0.1 only.
 | Unit tests | 25 of 25 pass |
 
 ## How it works
+
+![Architecture: agents check every fact once; the answer agent reads only verified memory](docs/images/architecture.png)
 
 An orchestrator agent routes each page to specialist agents (rates, fees and products, branches). A verifier
 agent keeps a fact only when the page text proves it. A conflict agent resolves contradictions by source
